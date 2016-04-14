@@ -70,8 +70,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\Scripts\InteractableItem.cs" />
+    <Compile Include="Assets\Scripts\LuneScript.cs" />
+    <Compile Include="Assets\Scripts\SphereMove.cs" />
     <Compile Include="Assets\Scripts\WandController.cs" />
-    <Compile Include="Assets\SphereMove.cs" />
     <Compile Include="Assets\SteamVR\Extras\SteamVR_GazeTracker.cs" />
     <Compile Include="Assets\SteamVR\Extras\SteamVR_LaserPointer.cs" />
     <Compile Include="Assets\SteamVR\Extras\SteamVR_Teleporter.cs" />
