@@ -10,10 +10,11 @@ public class WandController : MonoBehaviour
     private SteamVR_Controller.Device controller { get { return SteamVR_Controller.Input((int)trackedObj.index); } }
     private SteamVR_TrackedObject trackedObj;
 
-    HashSet<InteractableItem> objectsHoveringOver = new HashSet<InteractableItem>();
 
-    private InteractableItem closestItem;
-    private InteractableItem interactingItem;
+    private float cntrDist;
+    private Vector3 gripPos;
+
+    public GameObject Sphere;
 
     // Use this for initialization
     void Start()
@@ -24,6 +25,8 @@ public class WandController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+
+        //Move Sphere with controller
         if (controller == null)
         {
             Debug.Log("Controller not initialized");
@@ -32,54 +35,22 @@ public class WandController : MonoBehaviour
 
         if (controller.GetPressDown(gripButton))
         {
-            float minDistance = float.MaxValue;
-
-            float distance;
-            foreach (InteractableItem item in objectsHoveringOver)
-            {
-                distance = (item.transform.position - transform.position).sqrMagnitude;
-
-                if (distance < minDistance)
-                {
-                    minDistance = distance;
-                    closestItem = item;
-                }
-            }
-
-            interactingItem = closestItem;
-
-            if (interactingItem)
-            {
-                if (interactingItem.IsInteracting())
-                {
-                    interactingItem.EndInteraction(this);
-                }
-
-                interactingItem.BeginInteraction(this);
-            }
+            gripPos = controller.transform.pos;
         }
-
-        if (controller.GetPressUp(gripButton) && interactingItem != null)
+        if (controller.GetPress(gripButton))
         {
-            interactingItem.EndInteraction(this);
+            cntrDist = Vector3.Distance(controller.transform.pos, gripPos);
+            Sphere.transform.RotateAround(Sphere.transform.position, Vector3.up, cntrDist);
         }
     }
 
     private void OnTriggerEnter(Collider collider)
     {
-        InteractableItem collidedItem = collider.GetComponent<InteractableItem>();
-        if (collidedItem)
-        {
-            objectsHoveringOver.Add(collidedItem);
-        }
+       
     }
 
     private void OnTriggerExit(Collider collider)
     {
-        InteractableItem collidedItem = collider.GetComponent<InteractableItem>();
-        if (collidedItem)
-        {
-            objectsHoveringOver.Remove(collidedItem);
-        }
+        
     }
 }
