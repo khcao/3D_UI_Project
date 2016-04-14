@@ -40,7 +40,9 @@ public class WandController : MonoBehaviour
         if (controller.GetPress(gripButton))
         {
             Vector3 newGripPos = controller.transform.pos - gripPos;
-            Sphere.transform.rotation = Quaternion.Euler(newGripPos.y, -newGripPos.x, 0);
+			newGripPos *= 2;
+			Sphere.transform.rotation = Quaternion.Euler(0, newGripPos.x, 0) * Sphere.transform.rotation;
+			Debug.Log(newGripPos);
         }
     }
 
