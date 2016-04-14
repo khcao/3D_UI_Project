@@ -13,9 +13,10 @@ public class WandController : MonoBehaviour
 
     private float cntrDist;
     private Vector3 gripPos;
+	private Vector3 triggerPos;
 
     public GameObject Sphere;
-
+	public GameObject cube;
     // Use this for initialization
     void Start()
     {
@@ -33,6 +34,8 @@ public class WandController : MonoBehaviour
             return;
         }
 
+
+		//Rotate the sphere around the user
         if (controller.GetPressDown(gripButton))
         {
             gripPos = controller.transform.pos;
@@ -40,10 +43,34 @@ public class WandController : MonoBehaviour
         if (controller.GetPress(gripButton))
         {
             Vector3 newGripPos = controller.transform.pos - gripPos;
-			newGripPos *= 2;
-			Sphere.transform.rotation = Quaternion.Euler(0, newGripPos.x, 0) * Sphere.transform.rotation;
+			newGripPos *= 200;
+			float mag = 0;
+
+			//Check if it goes left or right
+			if (newGripPos.x > 0) {
+				mag = newGripPos.magnitude;
+			} else {
+				mag = -newGripPos.magnitude;
+
+			}
+				
+			//Sphere.transform.rotation = Quaternion.Euler(0, newGripPos.x, 0) * Sphere.transform.rotation;
+			Sphere.transform.rotation *= Quaternion.Euler(0,mag, 0);
+			gripPos = controller.transform.pos;
 			Debug.Log(newGripPos);
         }
+
+
+		//Move objects within the sphere
+		if (controller.GetPressDown(triggerButton))
+		{
+			triggerPos = controller.transform.pos - cube.transform.position;
+		}
+		if (controller.GetPress(triggerButton))
+		{
+			Vector3 newPos = controller.transform.pos - triggerPos;
+			cube.transform.position = newPos;
+		}
     }
 
     private void OnTriggerEnter(Collider collider)
