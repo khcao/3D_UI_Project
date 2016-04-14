@@ -40,7 +40,9 @@ public class WandController : MonoBehaviour
         if (controller.GetPress(gripButton))
         {
             cntrDist = Vector3.Distance(controller.transform.pos, gripPos);
-            Sphere.transform.RotateAround(Sphere.transform.position, Vector3.up, cntrDist);
+            float angle = Mathf.Atan2(controller.transform.pos.y, controller.transform.pos.x) * Mathf.Rad2Deg;
+            Sphere.transform.rotation = Quaternion.AngleAxis(90.0f - angle, Vector3.up);
+            //Sphere.transform.RotateAround(Sphere.transform.position, Vector3.up, cntrDist);
         }
     }
 
