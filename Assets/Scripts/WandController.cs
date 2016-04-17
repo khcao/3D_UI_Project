@@ -21,10 +21,14 @@ public class WandController : MonoBehaviour
     private GameObject rotatingWidget; // the collided head of the widget we want to rotate
     private Quaternion origRotTrigger; // initial rotation of controller when pressing trigger button
     private Quaternion origSphereRotTrigger; // initial rotation of the sphere when pressing trigger button
+    private bool pulsing = false;
 
     public GameObject Sphere;
 	//public GameObject cube;
     public GameObject camera;
+
+    public GameObject Subprefab;
+    public Transform widgetObj;
     
     // Use this for initialization
     void Start()
@@ -63,6 +67,7 @@ public class WandController : MonoBehaviour
 
         Vector3 handToSphere = j * f;
         Vector3 intersectionPos = transform.position + handToSphere; // the mystical raycast that hit the mystical sphere
+        Debug.Log(intersectionPos);
 
 
 
@@ -76,6 +81,20 @@ public class WandController : MonoBehaviour
         laserPoints[0] = transform.position;
         laserPoints[1] = transform.position + (transform.forward * 5);
         laser.SetPositions(laserPoints);
+
+        // Provides feedback when you hit a widget head or menu item
+        RaycastHit pulse;
+        if (Physics.Raycast(transform.position, transform.forward, out pulse))
+        {
+            if ((pulse.transform.gameObject.layer == 9  || pulse.transform.gameObject.layer == 10 ) && !pulsing && !controller.GetPress(triggerButton))
+            {
+                pulsing = true;
+                controller.TriggerHapticPulse(3000);
+            }
+        }
+        else
+            pulsing = false;
+        //////////////////////////////////////////////////////////////////////
 
         //Rotate the sphere around the user
         if (controller.GetPressDown(gripButton))
@@ -158,6 +177,20 @@ public class WandController : MonoBehaviour
                     rotatingWidget = hit.transform.gameObject;//hit.transform.parent.gameObject; // NOTE: THIS IS REFERRED TO AS "Head" IN THE HIERARCHY
                     // origRotTrigger = transform.rotation;
                     // origSphereRotTrigger = rotatingWidget.transform.rotation;
+                }
+                //Spawn sub menus
+                else if (hit.transform.gameObject.layer == 10)
+                {
+                    Debug.Log("Hits Volume Renderer");
+                    /*Transform newWidget = Instantiate(widgetObj);
+                    newWidget.parent = GameObject.FindGameObjectWithTag("SphereRendered").transform;
+                    newWidget.transform.localPosition = new Vector3(0, 0, 0);
+                    newWidget.localScale = new Vector3(1, 1, 1);*/
+                    GameObject Submenu = Instantiate(Subprefab);
+                    Submenu.transform.localPosition = hit.transform.parent.transform.position;
+                    Submenu.transform.parent = GameObject.FindGameObjectWithTag("Menu").transform;
+
+                    Submenu.transform.RotateAround(Sphere.transform.position, Sphere.transform.up, 30);
                 }
             }
             else
