@@ -8,6 +8,7 @@ public class Texture3DRenderer : MonoBehaviour
 {
 
     Texture3D tex;
+    Renderer renderer;
     public Shader shader;
     string FilePath = "Resources/head/head-pgm";
     string FileNamePrefix = "head";
@@ -64,16 +65,36 @@ public class Texture3DRenderer : MonoBehaviour
         tex.SetPixels(newC);
         tex.Apply();
 
-        Renderer r = GetComponent<Renderer>();
-        r.material.shader = shader;
-        r.material.SetTexture("_Volume", tex);
+        renderer = GetComponent<Renderer>();
+        renderer.material.shader = shader;
+        renderer.material.SetTexture("_Volume", tex);
 
 
-        //GetComponent<Renderer>().material.SetTexture("_tex", tex);
+
+
     }
 
     // Update is called once per frame
     void Update()
     {
+    }
+    public void OnPostRender()
+    {
+
+        //GL.LoadPixelMatrix();
+        //GL.Viewport(new Rect(0, 0, Screen.width, Screen.height));
+        GL.Color(new Color(1f, 0.0f, 0.0f, 1f));
+        GL.Begin(GL.QUADS);
+        renderer.material.SetPass(0);
+
+        for (int i = 0; i < Depth; i++)
+        {
+            float d = (float)i / Depth;
+            GL.Vertex3(0, 0, d);
+            GL.Vertex3(0, 1, d);
+            GL.Vertex3(1, 1, d);
+            GL.Vertex3(1, 0, d);
+        }
+        GL.End();
     }
 }
