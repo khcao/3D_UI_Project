@@ -2,6 +2,8 @@
 	Properties
 	{
 		_Volume("Color (RGB) Alpha (A)", 3D) = "" {}
+		_Position("Position", Vector) = (0, 0, 0, 0)
+		_Scale("Scale", Vector) = (1, 1, 1, 1)
 	}
 	SubShader{
 		Tags
@@ -14,7 +16,7 @@
 		ZWrite Off
 		Pass{
 
-			CGPROGRAM
+			CGPROGRAM 
 			#pragma vertex vert
 			#pragma fragment frag alpha
 			#pragma enable_d3d11_debug_symbols
@@ -22,6 +24,8 @@
 			#include "UnityCG.cginc"
 
 			sampler3D _Volume;
+			vector _Position;
+			vector _Scale;
 
 			struct vs_input {
 				float4 vertex : POSITION;
@@ -36,8 +40,8 @@
 			ps_input vert(vs_input v)
 			{
 				ps_input o;
-				o.pos = mul(UNITY_MATRIX_MVP, v.vertex);
-				o.uv = v.vertex.xyz; //* 0.5 + 0.5;
+				o.pos = (mul(UNITY_MATRIX_MVP, v.vertex) + _Position.wxyz) * _Scale.wxyz;
+				o.uv = v.vertex.xyz;
 
 				return o;
 			}

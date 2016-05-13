@@ -50,9 +50,9 @@ public class Texture3DRenderer : MonoBehaviour
 
                         for (int j = 0; j < Width; j++)
                         {
-
+                            float val = (float)bytes[j] / (float)maxBit;
                             newC[j + (k * Width) + (i * Width * Height)]
-                                = new Color(1, 1, 1, (float)bytes[j] / (float)maxBit);
+                                = new Color(0.5f, 0.5f, 0.5f, val / Depth * 2);
                         }
                     }
                 }
