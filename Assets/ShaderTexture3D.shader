@@ -3,7 +3,8 @@
 	{
 		_Volume("Color (RGB) Alpha (A)", 3D) = "" {}
 		_Position("Position", Vector) = (0, 0, 0, 0)
-		_Scale("Scale", Vector) = (1, 1, 1, 1)
+		//_Scale("Scale", Vector) = (1, 1, 1, 1)
+		_Depth("Depth", Float) = 1
 	}
 	SubShader{
 		Tags
@@ -26,6 +27,7 @@
 			sampler3D _Volume;
 			vector _Position;
 			vector _Scale;
+			float _Depth;
 
 			struct vs_input {
 				float4 vertex : POSITION;
@@ -40,7 +42,7 @@
 			ps_input vert(vs_input v)
 			{
 				ps_input o;
-				o.pos = (mul(UNITY_MATRIX_MVP, v.vertex) + _Position.wxyz) * _Scale.wxyz;
+				o.pos = (mul(UNITY_MATRIX_MVP, v.vertex) + _Position.xyzw);// *_Scale;
 				o.uv = v.vertex.xyz;
 
 				return o;
@@ -48,7 +50,9 @@
 
 			float4 frag(ps_input i) : Color
 			{
-				return tex3D(_Volume, i.uv); //float4(1,0,0,0.1); 
+				float4 col = tex3D(_Volume, i.uv); //float4(1,0,0,0.1); 
+				col.a /= _Depth / 6;
+				return col;
 			}
 
 

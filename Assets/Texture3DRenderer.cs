@@ -6,9 +6,9 @@ using System.Text.RegularExpressions;
 
 public class Texture3DRenderer : MonoBehaviour
 {
-
+    public Transform RenderReflector;
     Texture3D tex;
-    Renderer renderer;
+    Material mat;
     public Shader shader;
     string FilePath = "Resources/head/head-pgm";
     string FileNamePrefix = "head";
@@ -52,7 +52,7 @@ public class Texture3DRenderer : MonoBehaviour
                         {
                             float val = (float)bytes[j] / (float)maxBit;
                             newC[j + (k * Width) + (i * Width * Height)]
-                                = new Color(0.5f, 0.5f, 0.5f, val / Depth * 2);
+                                = new Color(1, 1, 1, val);
                         }
                     }
                 }
@@ -65,10 +65,10 @@ public class Texture3DRenderer : MonoBehaviour
         tex.SetPixels(newC);
         tex.Apply();
 
-        renderer = GetComponent<Renderer>();
-        renderer.material.shader = shader;
-        renderer.material.SetTexture("_Volume", tex);
-
+        Renderer renderer = GetComponent<Renderer>();
+        mat = renderer.material;
+        mat.shader = shader;
+        mat.SetTexture("_Volume", tex);
 
 
 
@@ -85,7 +85,10 @@ public class Texture3DRenderer : MonoBehaviour
         //GL.Viewport(new Rect(0, 0, Screen.width, Screen.height));
         GL.Color(new Color(1f, 0.0f, 0.0f, 1f));
         GL.Begin(GL.QUADS);
-        renderer.material.SetPass(0);
+        mat.SetPass(0);
+        mat.SetFloat("_Depth", Depth);
+        mat.SetVector("_Scale", RenderReflector.localScale);
+        mat.SetVector("_Position", RenderReflector.position);
 
         for (int i = 0; i < Depth; i++)
         {
