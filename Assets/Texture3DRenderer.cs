@@ -13,7 +13,7 @@ public class Texture3DRenderer : MonoBehaviour
     string FilePath = "Resources/head/head-pgm";
     string FileNamePrefix = "head";
     string FileTypeExtension = ".pgm";
-    int Width = 256, Height = 256, Depth = 64;
+    int Width = 256, Height = 256, Depth = 128;
 
     // Use this for initialization
     void Start()
@@ -87,8 +87,7 @@ public class Texture3DRenderer : MonoBehaviour
         GL.Begin(GL.QUADS);
         mat.SetPass(0);
         mat.SetFloat("_Depth", Depth);
-        mat.SetVector("_Scale", RenderReflector.localScale);
-        mat.SetVector("_Position", RenderReflector.position);
+        mat.SetMatrix("_Transform", RenderReflector.transform.localToWorldMatrix);
 
         for (int i = 0; i < Depth; i++)
         {
